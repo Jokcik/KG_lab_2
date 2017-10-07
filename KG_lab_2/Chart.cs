@@ -37,7 +37,7 @@ namespace KG_lab_2
             double max = int.MinValue;
             double min = int.MaxValue;
 
-            var step = (_xMax - _xMin) / 100f;
+            var step = (_xMax - _xMin) / (float)_sizeGrid;
             for (double i = _xMin; i <= _xMax; i += step)
             {
                 var value = _func(i);
@@ -71,7 +71,7 @@ namespace KG_lab_2
             yAxis.DrawMainLine();
             
             PointF p1 = converter.WorldToScreen(converter.World.Left, (float)_func(converter.World.Left));
-            var dx = converter.World.Width / converter.Screen.Width;
+            var dx = converter.World.Width / _sizeGrid;
 
             for (var x = converter.World.Left + dx; x < converter.World.Right; x += dx)
             {

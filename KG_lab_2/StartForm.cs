@@ -1,11 +1,14 @@
-﻿using System;
+﻿using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.Windows.Forms;
 
 namespace KG_lab_2
 {
     public sealed class StartForm : Form
     {
+        private TextBox funcTextBox;
+        
         private void InitializeComponent()
         {
             Text = @"Лабораторная работа №2. Графики";
@@ -20,12 +23,21 @@ namespace KG_lab_2
                 Padding = new Padding(20),
                 Width = Width - 4 * 20
             };
+
+            var funcPanel = new TableLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                ColumnCount = 2,
+                Margin = new Padding(0),
+                Height = 30
+            };
             
-            var label = new Label {Text = @"Функция: y = x", Width = panel.Width};
+            var label = new Label {Text = @"Функция: y =", Margin = new Padding(0, 5, 0, 0), Width = 75};
             var labelXmax = new Label {Text = @"Введите верхний предел функции:", Width = panel.Width};
             var labelXmin = new Label {Text = @"Введите нижний предел функции:", Width = panel.Width, Margin = new Padding(0, 10, 0, 0)};
             var labelStep = new Label {Text = @"Введите шаг сетки:", Width = panel.Width, Margin = new Padding(0, 10, 0, 0)};
             
+            funcTextBox = new TextBox {Text = @"x"};
             var textBoxXmax = new TextBox {Text = @"1", Width = panel.Width};
             var textBoxXmin = new TextBox {Text = @"-1", Width = panel.Width};
             var textBoxStep = new TextBox {Text = @"100", Width = panel.Width};
@@ -46,7 +58,10 @@ namespace KG_lab_2
                 form.ShowDialog(this);
             };
             
-            panel.Controls.Add(label);
+            funcPanel.Controls.Add(label);
+            funcPanel.Controls.Add(funcTextBox);
+            
+            panel.Controls.Add(funcPanel);
             
             panel.Controls.Add(labelXmax);
             panel.Controls.Add(textBoxXmax);
@@ -63,7 +78,12 @@ namespace KG_lab_2
 
         public double getFunc(double x)
         {
-            return Math.Sin(x);
+            DataTable table = new DataTable();
+            var func = funcTextBox.Text;
+            var replace = func.Replace("x", $"{x.ToString(CultureInfo.InvariantCulture)}");
+
+            var a = table.Compute(replace, "").ToString();
+            return double.Parse(a);
         }
 
         public StartForm()

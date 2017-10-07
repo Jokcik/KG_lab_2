@@ -18,22 +18,11 @@ namespace KG_lab_2.Axis
         
         public static void Step(ref double k, ref double h, out int m, out int n)
         {
-            // k -- px/WU
-            // h -- px, preferred screen step
-            // m -- mantissa
-            // n -- order
+            var hWu = h / k;
 
-            // |m * (10^n) WU * k px/WU - h| --> min
-            // m @ {1, 2, 5}, n @ Z
-
-            // (h/k) -- WU, preferred world step
-            double hWu = h / k;
-
-            // n = [lg(h_wu)]
             n = (int)Math.Floor(Math.Log10(hWu));
 
-            // m = h / 10^n
-            double mFl = hWu / Math.Pow(10.0, n);
+            var mFl = hWu / Math.Pow(10.0, n);
 
             if (mFl < 2)
                 m = mFl - 1 < 2 - mFl ? 1 : 2;
@@ -48,10 +37,10 @@ namespace KG_lab_2.Axis
                 n++;
             }
 
-            double worldStep = m * Math.Pow(10.0, n); // WU
+            var worldStep = m * Math.Pow(10.0, n); // WU
 
-            h = worldStep /* WU */ * k /* px/WU */;
-            k = worldStep; // meant px/WU
+            h = worldStep * k ;
+            k = worldStep;
         }
 
 
