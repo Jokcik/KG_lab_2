@@ -7,7 +7,7 @@ namespace KG_lab_2.Axis
     {
         protected WorldScreenConverter Converter;
         protected Graphics G;
-        protected Pen GridPen = new Pen(Color.Black, 1);
+        protected Pen GridPen = new Pen(Color.DarkGray, 1);
         protected Pen MainPen = new Pen(Color.Black, 2);
 
         protected Axis(WorldScreenConverter converter, Graphics g)

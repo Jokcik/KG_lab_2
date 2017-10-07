@@ -29,9 +29,9 @@ namespace KG_lab_2.Axis
 
         public override void DrawMainLine()
         {
-            var x = Converter.Screen.Width / 2;
-            const int yl = 0;
-            var yr = Converter.Screen.Height;
+            var x = Converter.Screen.Left + Converter.Screen.Width / 2;
+            var yl = Converter.Screen.Top;
+            var yr = Converter.Screen.Top + Converter.Screen.Height;
             G.DrawLine(MainPen, x, yl, x, yr);
             
             

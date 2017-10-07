@@ -61,7 +61,7 @@ namespace KG_lab_2
             var g = e.Graphics;
             var mainRectangle = g.VisibleClipBounds;
             var converter = new WorldScreenConverter(
-                new Rectangle(0, 0, (int)mainRectangle.Width, (int)mainRectangle.Height),
+                new Rectangle(20, 20, (int)mainRectangle.Width - 40, (int)mainRectangle.Height - 40),
                 new RectangleF(_xMin, _yMin, _xMax - _xMin, _yMax - _yMin)
             );
 
@@ -76,7 +76,7 @@ namespace KG_lab_2
             for (var x = converter.World.Left + dx; x < converter.World.Right; x += dx)
             {
                 var p2 = converter.WorldToScreen(x, (float)_func(x));
-                g.DrawLine(Pens.Red, p1, p2);
+                g.DrawLine(new Pen(Color.Red, 2), p1, p2);
                 p1 = p2;
             }
             

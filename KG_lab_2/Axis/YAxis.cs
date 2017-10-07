@@ -28,9 +28,9 @@ namespace KG_lab_2.Axis
 
         public override void DrawMainLine()
         {
-            const int xl = 0;
-            var xr = Converter.Screen.Width;
-            var y = Converter.Screen.Height / 2;
+            var xl = Converter.Screen.Left;
+            var xr = Converter.Screen.Left + Converter.Screen.Width;
+            var y = Converter.Screen.Top + Converter.Screen.Height / 2;
             G.DrawLine(MainPen, xl, y, xr, y);
 
             foreach (var markAbs in _gridLines){
