@@ -3,13 +3,15 @@ using System.Windows.Forms;
 
 namespace KG_lab_2
 {
-    public sealed partial class Form1 : Form
+    public sealed class StartForm : Form
     {
         private void InitializeComponent()
         {
             Text = @"Лабораторная работа №2. Графики";
             Width = 300;
             Height = 300;
+            Location = new Point(100, 200);
+            StartPosition = FormStartPosition.Manual;
 
             var panel = new TableLayoutPanel
             {
@@ -28,6 +30,20 @@ namespace KG_lab_2
             var textBoxStep = new TextBox {Text = @"100", Width = panel.Width};
 
             var button = new Button {Text = @"Построить", Margin = new Padding(0, 10, 0, 0)};
+            button.Click += (sender, args) =>
+            {
+                int step, xMax, xMin;
+                if (!(int.TryParse(textBoxStep.Text, out step) && 
+                    int.TryParse(textBoxXmax.Text, out xMax) &&
+                    int.TryParse(textBoxXmin.Text, out xMin)))
+                {
+                    MessageBox.Show(this, @"Введено не число");
+                    return;
+                }
+                
+                var form = new Graphic(step, xMax, xMin, getFunc);
+                form.ShowDialog(this);
+            };
             
             panel.Controls.Add(label);
             
@@ -44,7 +60,12 @@ namespace KG_lab_2
             Controls.Add(panel);
         }
 
-        public Form1()
+        public double getFunc(double x)
+        {
+            return x;
+        }
+
+        public StartForm()
         {
             InitializeComponent();
         }
