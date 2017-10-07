@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using KG_lab_2.Axis;
 
 namespace KG_lab_2
 {
@@ -8,27 +9,30 @@ namespace KG_lab_2
     {
         private int _xMax;
         private int _xMin;
-        private int _step;
+        private int _sizeGrid;
+        private double _stepX;
+        private double _stepY;
         private float _yMax;
         private float _yMin;
         private readonly Func<double, double> _func;
 
-        public Chart(int step, int xMax, int xMin, Func<double, double> func)
+        public Chart(int sizeGrid, int xMax, int xMin, Func<double, double> func)
         {
-            _step = step;
+            _sizeGrid = sizeGrid;
             _xMax = xMax;
             _xMin = xMin;
+            _stepX = (xMax - xMin) / (double)sizeGrid;
             _func = func;
-            InitY(); 
-            
+            InitY();
+
             Text = @"График";
             Location = new Point(400, 200);
             StartPosition = FormStartPosition.Manual;
-            
+
             SetStyle(ControlStyles.DoubleBuffer |
                      ControlStyles.UserPaint |
                      ControlStyles.AllPaintingInWmPaint, true);
-            ResizeRedraw = true; 
+            ResizeRedraw = true;
         }
 
         private void InitY()
@@ -36,9 +40,8 @@ namespace KG_lab_2
             double max = int.MinValue;
             double min = int.MaxValue;
 
-            // ReSharper disable once NotAccessedVariable
             var step = (max - min) / 100f;
-            for (var i = min; i <= max; ++step)
+            for (var i = min; i <= max; i += step)
             {
                 var value = _func(i);
                 if (value > max)
@@ -52,18 +55,24 @@ namespace KG_lab_2
                 }
             }
 
-            _yMax = (float) Math.Min(max, 600);
+            _yMax = (float) Math.Min(max, 600); // TODO: переделать
             _yMin = (float) Math.Min(min, 600);
+            _stepY = (_yMax - _yMin) / _sizeGrid;
         }
 
         protected override void OnPaint(PaintEventArgs e)
         {
             var g = e.Graphics;
             var mainRectangle = g.VisibleClipBounds;
-            var converter = new WorldScreenConverter(_xMin, _yMax, _xMax, _yMin,
-                new RectangleF(0, 0, mainRectangle.Width, mainRectangle.Height)
+            var converter = new WorldScreenConverter(
+                new Rectangle(0, 0, (int)mainRectangle.Width, (int)mainRectangle.Height),
+                new RectangleF(_xMin, _yMax, _xMax - _xMin, _yMin - _yMax)
             );
-            
+
+            var xAxis = new XAxis(converter, g, _sizeGrid);
+            var yAxis = new YAxis(converter, g);
+            xAxis.DrawMainLine(_stepX);
+            yAxis.DrawMainLine(_stepY);
             
             base.OnPaint(e);
         }

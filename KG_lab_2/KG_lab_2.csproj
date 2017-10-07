@@ -46,6 +46,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Axis\Axis.cs" />
+    <Compile Include="Axis\XAxis.cs" />
+    <Compile Include="Axis\YAxis.cs" />
     <Compile Include="Chart.cs">
       <SubType>Form</SubType>
     </Compile>
