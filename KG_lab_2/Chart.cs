@@ -62,7 +62,7 @@ namespace KG_lab_2
             InitY(mainRectangle);
             
             var converter = new WorldScreenConverter(
-                new Rectangle(20, 20, (int)mainRectangle.Width - 40, (int)mainRectangle.Height - 40),
+                new Rectangle(40, 40, (int)mainRectangle.Width - 80, (int)mainRectangle.Height - 80),
                 new RectangleF(_xMin, _yMin, _xMax - _xMin, _yMax - _yMin)
             );
 

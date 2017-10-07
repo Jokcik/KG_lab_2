@@ -28,11 +28,6 @@ namespace KG_lab_2.Axis
 
         public override void DrawMainLine()
         {
-            var xl = Converter.Screen.Left;
-            var xr = Converter.Screen.Left + Converter.Screen.Width;
-            var y = Converter.Screen.Top + Converter.Screen.Height / 2;
-            G.DrawLine(MainPen, xl, y, xr, y);
-
             foreach (var markAbs in _gridLines){
                 var markAbsScreen =
                     Converter.WorldToScreenY((float)markAbs);
@@ -41,13 +36,25 @@ namespace KG_lab_2.Axis
                     new PointF(Converter.Screen.Left, markAbsScreen),
                     new PointF(Converter.Screen.Right, markAbsScreen)
                 );
-
+                
+                var valueString = markAbs.ToString(CultureInfo.InvariantCulture);
                 G.DrawString(markAbs.ToString(CultureInfo.InvariantCulture),
                     new Font(FontFamily.GenericMonospace, 10),
                     Brushes.Black, 
-                    new PointF((Converter.Screen.Left + Converter.Screen.Right) / 2f, markAbsScreen - 15));
+                    new PointF(Converter.Screen.Left - (valueString.Length - 1) * 7 - 20, markAbsScreen - 10));
             }
             
+            var xl = Converter.Screen.Left;
+            var xr = Converter.Screen.Left + Converter.Screen.Width;
+            var y = Converter.Screen.Bottom;
+            G.DrawLine(MainPen, xl, y, xr, y);
+            G.DrawLine(MainPen, xr - 10, y - 4, xr, y);
+            G.DrawLine(MainPen, xr - 10, y + 4, xr, y);
+            G.DrawString("x",
+                new Font(FontFamily.GenericMonospace, 14, FontStyle.Bold),
+                Brushes.Black,
+                new PointF(xr + 10, y + 3));
+
         }
     }
 }
