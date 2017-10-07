@@ -19,10 +19,10 @@ namespace KG_lab_2.Axis
 
             _gridLines = new List<double>();
 
-            int xmin = (int) Math.Ceiling(converter.World.Left / k);
-            int xmax = (int) Math.Floor(converter.World.Right / k);
+            var xmin = (int) Math.Ceiling(converter.World.Left / k);
+            var xmax = (int) Math.Floor(converter.World.Right / k);
 
-            for (int x = xmin; x <= xmax; x++)
+            for (var x = xmin; x <= xmax; x++)
                 _gridLines.Add(x * k);
 
         }
@@ -31,8 +31,12 @@ namespace KG_lab_2.Axis
         {
             foreach (var markAbs in _gridLines)
             {
-                var markAbsScreen =
-                    Converter.WorldToScreenX((float) markAbs);
+                var markAbsScreen = Converter.WorldToScreenX((float) markAbs);
+                var y = Converter.Screen.Bottom;
+                if (Converter.World.Top <= 0 && Converter.World.Bottom >= 0)
+                {
+                    y = (int)Converter.WorldToScreenY(0);
+                }
 
                 G.DrawLine(GridPen,
                     new PointF(markAbsScreen, Converter.Screen.Top),
@@ -44,12 +48,18 @@ namespace KG_lab_2.Axis
                 G.DrawString(markAbs.ToString(CultureInfo.InvariantCulture),
                     new Font(FontFamily.GenericMonospace, 10),
                     Brushes.Black,
-                    new PointF(markAbsScreen - valueString.Length * 5, Converter.Screen.Bottom));
+                    new PointF(markAbsScreen - valueString.Length * 5, y));
             }
 
             var x = Converter.Screen.Left;
             var yl = Converter.Screen.Top;
             var yr = Converter.Screen.Top + Converter.Screen.Height;
+            
+            if (Converter.World.Top <= 0.0001 && Converter.World.Bottom >= 0.0001)
+            {
+                x = (int)Converter.WorldToScreenX(0);
+            }
+            
             G.DrawLine(MainPen, x, yl, x, yr);
             G.DrawLine(MainPen, x - 4, yl + 10, x, yl);
             G.DrawLine(MainPen, x + 4, yl + 10, x, yl);

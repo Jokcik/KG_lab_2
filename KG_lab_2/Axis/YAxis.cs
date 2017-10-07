@@ -28,10 +28,17 @@ namespace KG_lab_2.Axis
 
         public override void DrawMainLine()
         {
-            foreach (var markAbs in _gridLines){
-                var markAbsScreen =
-                    Converter.WorldToScreenY((float)markAbs);
+            foreach (var markAbs in _gridLines)
+            {
+                
+                var x = Converter.Screen.Left;
+                var markAbsScreen = Converter.WorldToScreenY((float)markAbs);
 
+                if (Converter.World.Left <= 0 && Converter.World.Right >= 0)
+                {
+                    x = (int)Converter.WorldToScreenX(0);
+                }
+                
                 G.DrawLine(GridPen,
                     new PointF(Converter.Screen.Left, markAbsScreen),
                     new PointF(Converter.Screen.Right, markAbsScreen)
@@ -41,12 +48,18 @@ namespace KG_lab_2.Axis
                 G.DrawString(markAbs.ToString(CultureInfo.InvariantCulture),
                     new Font(FontFamily.GenericMonospace, 10),
                     Brushes.Black, 
-                    new PointF(Converter.Screen.Left - (valueString.Length - 1) * 7 - 20, markAbsScreen - 10));
+                    new PointF(x - (valueString.Length - 1) * 7 - 20, markAbsScreen - 10));
             }
             
             var xl = Converter.Screen.Left;
             var xr = Converter.Screen.Left + Converter.Screen.Width;
             var y = Converter.Screen.Bottom;
+
+            if (Converter.World.Left <= 0.0001 && Converter.World.Right >= 0.0001)
+            {
+                y = (int)Converter.WorldToScreenY(0);
+            }
+            
             G.DrawLine(MainPen, xl, y, xr, y);
             G.DrawLine(MainPen, xr - 10, y - 4, xr, y);
             G.DrawLine(MainPen, xr - 10, y + 4, xr, y);

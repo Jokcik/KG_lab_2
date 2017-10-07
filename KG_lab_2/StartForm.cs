@@ -35,27 +35,28 @@ namespace KG_lab_2
             var label = new Label {Text = @"Функция: y =", Margin = new Padding(0, 5, 0, 0), Width = 75};
             var labelXmax = new Label {Text = @"Введите верхний предел функции:", Width = panel.Width};
             var labelXmin = new Label {Text = @"Введите нижний предел функции:", Width = panel.Width, Margin = new Padding(0, 10, 0, 0)};
-            var labelStep = new Label {Text = @"Введите шаг сетки:", Width = panel.Width, Margin = new Padding(0, 10, 0, 0)};
+            var labelStep = new Label {Text = @"Введите шаг сетки (px):", Width = panel.Width, Margin = new Padding(0, 10, 0, 0)};
             
             var funcTextBox = new TextBox {Text = @"x"};
             var textBoxXmax = new TextBox {Text = @"1", Width = panel.Width};
-            var textBoxXmin = new TextBox {Text = @"-1", Width = panel.Width};
-            var textBoxStep = new TextBox {Text = @"100", Width = panel.Width};
+            var textBoxXmin = new TextBox {Text = @"-2", Width = panel.Width};
+            var textBoxStep = new TextBox {Text = @"50", Width = panel.Width};
 
             var button = new Button {Text = @"Построить", Margin = new Padding(0, 10, 0, 0)};
             button.Click += (sender, args) =>
             {
-                int step, xMax, xMin;
-                if (!(int.TryParse(textBoxStep.Text, out step) && 
-                    int.TryParse(textBoxXmax.Text, out xMax) &&
-                    int.TryParse(textBoxXmin.Text, out xMin)))
+                int gridSize;
+                float xMax, xMin;
+                if (!(int.TryParse(textBoxStep.Text, out gridSize) && 
+                      float.TryParse(textBoxXmax.Text, out xMax) &&
+                      float.TryParse(textBoxXmin.Text, out xMin)))
                 {
                     MessageBox.Show(this, @"Введено не число");
                     return;
                 }
                 
                 _func = Translator(funcTextBox.Text);
-                var form = new Chart(step, xMax, xMin, GetFunc);
+                var form = new Chart(gridSize, xMax, xMin, GetFunc);
                 form.ShowDialog(this);
             };
             
