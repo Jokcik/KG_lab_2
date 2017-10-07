@@ -41,7 +41,7 @@ namespace KG_lab_2
                     return;
                 }
                 
-                var form = new Graphic(step, xMax, xMin, getFunc);
+                var form = new Chart(step, xMax, xMin, getFunc);
                 form.ShowDialog(this);
             };
             
