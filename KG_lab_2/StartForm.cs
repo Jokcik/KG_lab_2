@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace KG_lab_2
@@ -62,7 +63,7 @@ namespace KG_lab_2
 
         public double getFunc(double x)
         {
-            return x;
+            return Math.Sin(x);
         }
 
         public StartForm()

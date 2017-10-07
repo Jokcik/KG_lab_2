@@ -55,7 +55,7 @@ namespace KG_lab_2.Axis
         }
 
 
-        public abstract void DrawMainLine(double step);
+        public abstract void DrawMainLine();
     }
     
 }

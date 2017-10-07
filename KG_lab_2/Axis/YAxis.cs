@@ -26,7 +26,7 @@ namespace KG_lab_2.Axis
                 _gridLines.Add(y * k);
         }        
 
-        public override void DrawMainLine(double step)
+        public override void DrawMainLine()
         {
             const int xl = 0;
             var xr = Converter.Screen.Width;
@@ -42,12 +42,10 @@ namespace KG_lab_2.Axis
                     new PointF(Converter.Screen.Right, markAbsScreen)
                 );
 
-                if (Math.Abs(markAbs) < 0.00001) continue;
-                var valueString = markAbs.ToString(CultureInfo.InvariantCulture);
                 G.DrawString(markAbs.ToString(CultureInfo.InvariantCulture),
                     new Font(FontFamily.GenericMonospace, 10),
                     Brushes.Black, 
-                    new PointF((Converter.Screen.Left + Converter.Screen.Right) / 2f - valueString.Length * 5, markAbsScreen));
+                    new PointF((Converter.Screen.Left + Converter.Screen.Right) / 2f, markAbsScreen - 15));
             }
             
         }

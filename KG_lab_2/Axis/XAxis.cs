@@ -27,7 +27,7 @@ namespace KG_lab_2.Axis
 
         }        
 
-        public override void DrawMainLine(double step)
+        public override void DrawMainLine()
         {
             var x = Converter.Screen.Width / 2;
             const int yl = 0;
