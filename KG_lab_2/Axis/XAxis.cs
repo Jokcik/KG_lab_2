@@ -29,19 +29,26 @@ namespace KG_lab_2.Axis
 
         public override void DrawMainLine(double step)
         {
-            const int xl = 0;
-            var xr = Converter.Screen.Width;
-            var y = Converter.Screen.Height / 2;
-            G.DrawLine(Pen, xl, y, xr, y);
-
-            foreach (double markAbs in _gridLines){
-                float markAbsScreen =
+            var x = Converter.Screen.Width / 2;
+            const int yl = 0;
+            var yr = Converter.Screen.Height;
+            G.DrawLine(MainPen, x, yl, x, yr);
+            
+            
+            foreach (var markAbs in _gridLines){
+                var markAbsScreen =
                     Converter.WorldToScreenX((float)markAbs);
 
-                G.DrawLine(Pen,
+                G.DrawLine(GridPen,
                     new PointF(markAbsScreen, Converter.Screen.Top),
                     new PointF(markAbsScreen, Converter.Screen.Bottom)
                 );
+
+                var valueString = markAbs.ToString(CultureInfo.InvariantCulture);
+                G.DrawString(markAbs.ToString(CultureInfo.InvariantCulture),
+                    new Font(FontFamily.GenericMonospace, 10),
+                    Brushes.Black, 
+                    new PointF(markAbsScreen - valueString.Length * 5, (Converter.Screen.Bottom + Converter.Screen.Top) / 2f));
             }
 
         }

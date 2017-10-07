@@ -7,7 +7,8 @@ namespace KG_lab_2.Axis
     {
         protected WorldScreenConverter Converter;
         protected Graphics G;
-        protected Pen Pen = new Pen(Color.Black, 2);
+        protected Pen GridPen = new Pen(Color.Black, 1);
+        protected Pen MainPen = new Pen(Color.Black, 2);
 
         protected Axis(WorldScreenConverter converter, Graphics g)
         {
@@ -26,20 +27,20 @@ namespace KG_lab_2.Axis
             // m @ {1, 2, 5}, n @ Z
 
             // (h/k) -- WU, preferred world step
-            double h_wu = h / k;
+            double hWu = h / k;
 
             // n = [lg(h_wu)]
-            n = (int)Math.Floor(Math.Log10(h_wu));
+            n = (int)Math.Floor(Math.Log10(hWu));
 
             // m = h / 10^n
-            double m_fl = h_wu / Math.Pow(10.0, n);
+            double mFl = hWu / Math.Pow(10.0, n);
 
-            if (m_fl < 2)
-                m = m_fl - 1 < 2 - m_fl ? 1 : 2;
-            else if (m_fl < 5)
-                m = m_fl - 2 < 5 - m_fl ? 2 : 5;
+            if (mFl < 2)
+                m = mFl - 1 < 2 - mFl ? 1 : 2;
+            else if (mFl < 5)
+                m = mFl - 2 < 5 - mFl ? 2 : 5;
             else
-                m = m_fl - 5 < 10 - m_fl ? 5 : 10;
+                m = mFl - 5 < 10 - mFl ? 5 : 10;
 
             if (m == 10)
             {
@@ -47,10 +48,10 @@ namespace KG_lab_2.Axis
                 n++;
             }
 
-            double world_step = m * Math.Pow(10.0, n); // WU
+            double worldStep = m * Math.Pow(10.0, n); // WU
 
-            h = world_step /* WU */ * k /* px/WU */;
-            k = world_step; // meant px/WU
+            h = worldStep /* WU */ * k /* px/WU */;
+            k = worldStep; // meant px/WU
         }
 
 

@@ -40,8 +40,8 @@ namespace KG_lab_2
             double max = int.MinValue;
             double min = int.MaxValue;
 
-            var step = (max - min) / 100f;
-            for (var i = min; i <= max; i += step)
+            var step = (_xMax - _xMin) / 100f;
+            for (double i = _xMin; i <= _xMax; i += step)
             {
                 var value = _func(i);
                 if (value > max)
@@ -66,11 +66,11 @@ namespace KG_lab_2
             var mainRectangle = g.VisibleClipBounds;
             var converter = new WorldScreenConverter(
                 new Rectangle(0, 0, (int)mainRectangle.Width, (int)mainRectangle.Height),
-                new RectangleF(_xMin, _yMax, _xMax - _xMin, _yMin - _yMax)
+                new RectangleF(_xMin, _yMin, _xMax - _xMin, _yMax - _yMin)
             );
 
             var xAxis = new XAxis(converter, g, _sizeGrid);
-            var yAxis = new YAxis(converter, g);
+            var yAxis = new YAxis(converter, g, _sizeGrid);
             xAxis.DrawMainLine(_stepX);
             yAxis.DrawMainLine(_stepY);
             

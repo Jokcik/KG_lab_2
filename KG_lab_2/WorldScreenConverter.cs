@@ -15,12 +15,12 @@ namespace KG_lab_2
 
         public float WorldToScreenX(float x)
         {
-            return Screen.Left + (int) (((x - World.Left) / World.Width) * Screen.Width);
+            return Screen.Left + (int) ((x - World.Left) / World.Width * Screen.Width);
         }
         
         public float WorldToScreenY(float y)
         {
-            return Screen.Bottom + 1 - (int) (((y - World.Top) / World.Height) * Screen.Height);
+            return Screen.Top - (int) ((y - World.Bottom) / World.Height * Screen.Height);
         }
 
         public PointF WorldToScreen(float x, float y)
