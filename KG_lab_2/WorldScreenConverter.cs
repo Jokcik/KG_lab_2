@@ -13,12 +13,12 @@ namespace KG_lab_2
             Screen = screen;
         }
 
-        public float WorldToScreenX(float x)
+        public int WorldToScreenX(float x)
         {
             return Screen.Left + (int) ((x - World.Left) / World.Width * Screen.Width);
         }
         
-        public float WorldToScreenY(float y)
+        public int WorldToScreenY(float y)
         {
             return Screen.Top - (int) ((y - World.Bottom) / World.Height * Screen.Height);
         }
@@ -28,17 +28,17 @@ namespace KG_lab_2
             return new PointF(WorldToScreenX(x), WorldToScreenY(y));
         }
 
-        public float ScreenToWorldX(float x)
+        public float ScreenToWorldX(int x)
         {
-            return World.Left + (int) ((x - Screen.Left) / Screen.Width) * World.Width;
+            return World.Left + ((float)x - Screen.Left) / Screen.Width * World.Width;
         }
        
-        public float ScreenToWorldY(float y)
+        public float ScreenToWorldY(int y)
         {
-            return World.Bottom + 1 - (int) ((y - Screen.Top) / Screen.Height) * World.Height;
+            return World.Top - ((float)y - Screen.Bottom) / Screen.Height * World.Height;
         }
         
-        public PointF ScreenToWorld(float x, float y)
+        public PointF ScreenToWorld(int x, int y)
         {
             return new PointF(ScreenToWorldX(x), ScreenToWorldY(y));
         }
