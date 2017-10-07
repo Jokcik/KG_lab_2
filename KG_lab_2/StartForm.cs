@@ -1,13 +1,13 @@
-﻿using System.Data;
+﻿using System;
+using System.CodeDom.Compiler;
 using System.Drawing;
-using System.Globalization;
 using System.Windows.Forms;
 
 namespace KG_lab_2
 {
     public sealed class StartForm : Form
     {
-        private TextBox funcTextBox;
+        private Func<double, double> _func;
         
         private void InitializeComponent()
         {
@@ -37,7 +37,7 @@ namespace KG_lab_2
             var labelXmin = new Label {Text = @"Введите нижний предел функции:", Width = panel.Width, Margin = new Padding(0, 10, 0, 0)};
             var labelStep = new Label {Text = @"Введите шаг сетки:", Width = panel.Width, Margin = new Padding(0, 10, 0, 0)};
             
-            funcTextBox = new TextBox {Text = @"x"};
+            var funcTextBox = new TextBox {Text = @"x"};
             var textBoxXmax = new TextBox {Text = @"1", Width = panel.Width};
             var textBoxXmin = new TextBox {Text = @"-1", Width = panel.Width};
             var textBoxStep = new TextBox {Text = @"100", Width = panel.Width};
@@ -54,7 +54,8 @@ namespace KG_lab_2
                     return;
                 }
                 
-                var form = new Chart(step, xMax, xMin, getFunc);
+                _func = Translator(funcTextBox.Text);
+                var form = new Chart(step, xMax, xMin, GetFunc);
                 form.ShowDialog(this);
             };
             
@@ -76,15 +77,53 @@ namespace KG_lab_2
             Controls.Add(panel);
         }
 
-        public double getFunc(double x)
+        public double GetFunc(double x)
         {
-            DataTable table = new DataTable();
-            var func = funcTextBox.Text;
-            var replace = func.Replace("x", $"{x.ToString(CultureInfo.InvariantCulture)}");
-
-            var a = table.Compute(replace, "").ToString();
-            return double.Parse(a);
+            return _func(x);
         }
+
+        private static Func<double, double> Translator(string expression)
+        {
+            var provider = CodeDomProvider.CreateProvider("C#");
+
+            var para = new CompilerParameters();
+            para.ReferencedAssemblies.Add("system.dll");
+            para.GenerateExecutable = false;
+            para.GenerateInMemory = true;
+
+            var program =
+                "using System;\n" +
+                "\n" +
+                "namespace KG_Lab2\n" +
+                "{\n" +
+                "    public class Eval\n" +
+                "    {\n" +
+                "        public static double F(double x)\n" +
+                "        {\n" +
+                "            return \n" + expression + ";\n" +
+                "        }\n" +
+                "    }\n" +
+                "}\n";
+
+            var res = provider.CompileAssemblyFromSource(
+                para, program);
+
+            if (res.Errors.HasErrors)
+                return null;
+
+            try
+            {
+                return (Func<double, double>)res.CompiledAssembly.GetType("KG_Lab2.Eval").
+                    GetMethod("F").CreateDelegate(typeof(Func<double, double>), null);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(@"Внутрення ошибка: " + e.Message);
+                return null;
+            }
+        }
+
+        
 
         public StartForm()
         {

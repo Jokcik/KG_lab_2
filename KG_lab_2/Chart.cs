@@ -20,7 +20,6 @@ namespace KG_lab_2
             _xMax = xMax;
             _xMin = xMin;
             _func = func;
-            InitY();
 
             Text = @"График";
             Location = new Point(400, 200);
@@ -32,12 +31,12 @@ namespace KG_lab_2
             ResizeRedraw = true;
         }
 
-        private void InitY()
+        private void InitY(RectangleF screen)
         {
             double max = int.MinValue;
             double min = int.MaxValue;
 
-            var step = (_xMax - _xMin) / (float)_sizeGrid;
+            var step = (_xMax - _xMin) / screen.Width;
             for (double i = _xMin; i <= _xMax; i += step)
             {
                 var value = _func(i);
@@ -60,6 +59,8 @@ namespace KG_lab_2
         {
             var g = e.Graphics;
             var mainRectangle = g.VisibleClipBounds;
+            InitY(mainRectangle);
+            
             var converter = new WorldScreenConverter(
                 new Rectangle(20, 20, (int)mainRectangle.Width - 40, (int)mainRectangle.Height - 40),
                 new RectangleF(_xMin, _yMin, _xMax - _xMin, _yMax - _yMin)
@@ -71,7 +72,7 @@ namespace KG_lab_2
             yAxis.DrawMainLine();
             
             PointF p1 = converter.WorldToScreen(converter.World.Left, (float)_func(converter.World.Left));
-            var dx = converter.World.Width / _sizeGrid;
+            var dx = converter.World.Width / converter.Screen.Width;
 
             for (var x = converter.World.Left + dx; x < converter.World.Right; x += dx)
             {
