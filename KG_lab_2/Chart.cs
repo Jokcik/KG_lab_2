@@ -118,9 +118,12 @@ namespace KG_lab_2
             var lines = new List<PointF>();
             foreach (PointF p in _list)
             {
-                if (!PointIsValid(p) && lines.Count > 0)
+                if (!PointIsValid(p))
                 {
-                    g.DrawLines(new Pen(Color.Blue, 2), lines.ToArray());                                                       
+                    if (lines.Count > 1)
+                    {
+                        g.DrawLines(new Pen(Color.Blue, 2), lines.ToArray());                                                                               
+                    }
                     lines.Clear();
                 }
                 else
