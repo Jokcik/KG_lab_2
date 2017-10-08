@@ -38,10 +38,10 @@ namespace KG_lab_2.Axis
             {
                 var markAbsScreen = Converter.WorldToScreenX((float) markAbs);
                 var y = Converter.Screen.Bottom;
-                if (insertZeroY)
-                {
-                    y = (int)Converter.WorldToScreenY(0);
-                }
+//                if (insertZeroY)
+//                {
+//                    y = (int)Converter.WorldToScreenY(0);
+//                }
 
                 if (!Chart.PointIsValid(new PointF(0, markAbsScreen))) continue;
                 G.DrawLine(GridPen,

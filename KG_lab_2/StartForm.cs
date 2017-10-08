@@ -56,7 +56,7 @@ namespace KG_lab_2
                 }
                 
                 _func = Translator(funcTextBox.Text);
-                var form = new Chart(gridSize, xMax, xMin, GetFunc);
+                var form = new Chart(gridSize, xMax, xMin, GetFunc, funcTextBox.Text);
                 form.ShowDialog(this);
             };
             
@@ -125,7 +125,7 @@ namespace KG_lab_2
         }
 
         
-
+    
         public StartForm()
         {
             InitializeComponent();

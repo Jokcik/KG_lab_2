@@ -39,10 +39,10 @@ namespace KG_lab_2.Axis
                 var x = Converter.Screen.Left;
                 var markAbsScreen = Converter.WorldToScreenY((float)markAbs);
 
-                if (insertZeroX)
-                {
-                    x = Converter.WorldToScreenX(0);
-                }
+//                if (insertZeroX)
+//                {
+//                    x = Converter.WorldToScreenX(0);
+//                }
                 
                 if (!Chart.PointIsValid(new PointF(0, markAbsScreen))) continue;
                 

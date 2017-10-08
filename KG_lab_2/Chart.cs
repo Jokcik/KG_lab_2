@@ -21,14 +21,14 @@ namespace KG_lab_2
         private List<PointF> _list = new List<PointF>();
         private RectangleF _lastRectangleF;
         
-        public Chart(int sizeGrid, float xMax, float xMin, Func<double, double> func)
+        public Chart(int sizeGrid, float xMax, float xMin, Func<double, double> func, string textFunc)
         {
             _sizeGrid = sizeGrid;
             _xMax = xMax;
             _xMin = xMin;
             _func = func;
 
-            Text = @"График";
+            Text = $@"График функции: {textFunc}";
             Location = new Point(400, 200);
             StartPosition = FormStartPosition.Manual;
 
@@ -38,12 +38,10 @@ namespace KG_lab_2
             ResizeRedraw = true;
         }
         
-        const double maxLimit = Single.MaxValue / 2;
-        const double minLimit = Single.MinValue / 2;
 
-        private float NormalizeValue(double initialValue)
+        private static float NormalizeValue(double initialValue)
         {
-            if (initialValue < minLimit || initialValue > maxLimit)
+            if (initialValue < float.MinValue || initialValue > float.MaxValue)
                 return float.NaN;
 
             return (float)initialValue;
@@ -64,8 +62,9 @@ namespace KG_lab_2
             _yMin = float.MaxValue;
             _yMax = float.MinValue;
 
-            var n = screen.Width / (_xMax - _xMin);
-            for (int i = 0; i < n; i++)
+//            var n = screen.Width / (_xMax - _xMin);
+            const int n = 1000;
+            for (var i = 0; i < n; i++)
             {
                 var x = _xMin + i * (_xMax - _xMin) / n;
                 var value = NormalizeValue(_func(x));
@@ -79,15 +78,11 @@ namespace KG_lab_2
                     _yMax = value;
             }
 
-            if (_yMax - _yMin <= Math.Abs(_yMin * 0.000001))//расширяет диапазон по Y если значение функции очень слабо изменяется на заданном интервале
-            {
-                var middle = (_yMin + _yMax) / 2.0f;
+            if (!(_yMax - _yMin <= Math.Abs(_yMin * 0.000001))) return;
+            var middle = (_yMin + _yMax) / 2.0f;
 
-                _yMax = middle + Math.Abs(middle) * 0.000001f;
-                _yMin = middle - Math.Abs(middle) * 0.000001f;
-            }
-
-            
+            _yMax = middle + Math.Abs(middle) * 0.000001f;
+            _yMin = middle - Math.Abs(middle) * 0.000001f;
         }
 
         protected override void OnPaint(PaintEventArgs e)
@@ -114,10 +109,22 @@ namespace KG_lab_2
             xAxis.DrawMainLine();
             yAxis.DrawMainLine();
 
-            for (int i = 1; i < _list.Count; ++i)
+            var lines = new List<PointF>();
+            foreach (PointF p in _list)
             {
-                if (!(PointIsValid(_list[i]) && PointIsValid(_list[i-1]))) continue;
-                g.DrawLine(new Pen(Color.Blue, 2), _list[i - 1], _list[i]);                
+                if (!PointIsValid(p) && lines.Count > 0)
+                {
+                    g.DrawLines(new Pen(Color.Blue, 2), lines.ToArray());                                                       
+                    lines.Clear();
+                }
+                else
+                {
+                    lines.Add(p);
+                }
+            }
+            if (lines.Count > 0)
+            {
+                g.DrawLines(new Pen(Color.Blue, 2), lines.ToArray());
             }
 
             if (_point.X != 0 && _point.Y >= 20)
