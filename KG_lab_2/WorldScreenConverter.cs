@@ -15,11 +15,13 @@ namespace KG_lab_2
 
         public int WorldToScreenX(float x)
         {
+            if (float.IsNaN(x)) return int.MaxValue;
             return Screen.Left + (int) ((x - World.Left) / World.Width * Screen.Width);
         }
         
         public int WorldToScreenY(float y)
         {
+            if (float.IsNaN(y)) return int.MaxValue;
             return Screen.Top - (int) ((y - World.Bottom) / World.Height * Screen.Height);
         }
 

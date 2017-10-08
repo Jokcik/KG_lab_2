@@ -28,16 +28,23 @@ namespace KG_lab_2.Axis
 
         public override void DrawMainLine()
         {
+            var screenY = (int)Converter.WorldToScreenY(0);
+            var screenX = (int)Converter.WorldToScreenX(0);
+            var insertZeroX = !(screenX >= Converter.Screen.Right || screenX <= Converter.Screen.Left);
+            var insertZeroY = !(screenY >= Converter.Screen.Bottom || screenY <= Converter.Screen.Top);
+            
             foreach (var markAbs in _gridLines)
             {
                 
                 var x = Converter.Screen.Left;
                 var markAbsScreen = Converter.WorldToScreenY((float)markAbs);
 
-                if (Converter.World.Left <= 0 && Converter.World.Right >= 0)
+                if (insertZeroX)
                 {
-                    x = (int)Converter.WorldToScreenX(0);
+                    x = Converter.WorldToScreenX(0);
                 }
+                
+                if (!Chart.PointIsValid(new PointF(0, markAbsScreen))) continue;
                 
                 G.DrawLine(GridPen,
                     new PointF(Converter.Screen.Left, markAbsScreen),
@@ -55,11 +62,11 @@ namespace KG_lab_2.Axis
             var xr = Converter.Screen.Left + Converter.Screen.Width;
             var y = Converter.Screen.Bottom;
 
-            if (Converter.World.Left <= 0.0001 && Converter.World.Right >= 0.0001)
+            if (insertZeroY)
             {
-                y = (int)Converter.WorldToScreenY(0);
+                y = screenY;
             }
-            
+        
             G.DrawLine(MainPen, xl, y, xr, y);
             G.DrawLine(MainPen, xr - 10, y - 4, xr, y);
             G.DrawLine(MainPen, xr - 10, y + 4, xr, y);

@@ -29,15 +29,21 @@ namespace KG_lab_2.Axis
 
         public override void DrawMainLine()
         {
+            var screenY = (int)Converter.WorldToScreenY(0);
+            var screenX = (int)Converter.WorldToScreenX(0);
+            var insertZeroX = !(screenX >= Converter.Screen.Right || screenX <= Converter.Screen.Left);
+            var insertZeroY = !(screenY >= Converter.Screen.Bottom || screenY <= Converter.Screen.Top);
+            
             foreach (var markAbs in _gridLines)
             {
                 var markAbsScreen = Converter.WorldToScreenX((float) markAbs);
                 var y = Converter.Screen.Bottom;
-                if (Converter.World.Top <= 0 && Converter.World.Bottom >= 0)
+                if (insertZeroY)
                 {
                     y = (int)Converter.WorldToScreenY(0);
                 }
 
+                if (!Chart.PointIsValid(new PointF(0, markAbsScreen))) continue;
                 G.DrawLine(GridPen,
                     new PointF(markAbsScreen, Converter.Screen.Top),
                     new PointF(markAbsScreen, Converter.Screen.Bottom)
@@ -55,7 +61,7 @@ namespace KG_lab_2.Axis
             var yl = Converter.Screen.Top;
             var yr = Converter.Screen.Top + Converter.Screen.Height;
             
-            if (Converter.World.Top <= 0.0001 && Converter.World.Bottom >= 0.0001)
+            if (insertZeroX)
             {
                 x = (int)Converter.WorldToScreenX(0);
             }

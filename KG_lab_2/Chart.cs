@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
+using System.Linq;
 using System.Windows.Forms;
 using KG_lab_2.Axis;
 
@@ -9,8 +10,8 @@ namespace KG_lab_2
 {
     public sealed class Chart : Form
     {
-        private readonly float _xMax;
-        private readonly float _xMin;
+        private float _xMax;
+        private float _xMin;
         private readonly int _sizeGrid;
         private float _yMax;
         private float _yMin;
@@ -18,7 +19,7 @@ namespace KG_lab_2
 
         private Point _point = new Point(0, 0);
         private List<PointF> _list = new List<PointF>();
-        private RectangleF lastRectangleF = new RectangleF();
+        private RectangleF _lastRectangleF;
         
         public Chart(int sizeGrid, float xMax, float xMin, Func<double, double> func)
         {
@@ -36,69 +37,87 @@ namespace KG_lab_2
                      ControlStyles.AllPaintingInWmPaint, true);
             ResizeRedraw = true;
         }
+        
+        const double maxLimit = Single.MaxValue / 2;
+        const double minLimit = Single.MinValue / 2;
 
-        private void InitY(RectangleF screen)
+        private float NormalizeValue(double initialValue)
         {
-            double max = int.MinValue;
-            double min = int.MaxValue;
+            if (initialValue < minLimit || initialValue > maxLimit)
+                return float.NaN;
 
-            var step = (_xMax - _xMin) / screen.Width;
-            for (double i = _xMin; i <= _xMax; i += step)
-            {
-                var value = _func(i);
-                if (value > max)
-                {
-                    max = value;
-                }
-
-                if (value < min)
-                {
-                    min = value;
-                }
-            }
-
-            _yMax = (float) (max > int.MaxValue ? 600 : max); // TODO: переделать
-            _yMin = (float) (min < int.MinValue ? 600 : min);
+            return (float)initialValue;
         }
 
+
         // ReSharper disable CompareOfFloatsByEqualityOperator
+        private void InitY(RectangleF screen)
+        {
+            if (screen.Width != _lastRectangleF.Width || screen.Height != _lastRectangleF.Height)
+            {
+                _list.Clear();
+            }
+        
+            var insert = _list.Count == 0;
+            
+            
+            _yMin = float.MaxValue;
+            _yMax = float.MinValue;
+
+            var n = screen.Width / (_xMax - _xMin);
+            for (int i = 0; i < n; i++)
+            {
+                var x = _xMin + i * (_xMax - _xMin) / n;
+                var value = NormalizeValue(_func(x));
+                if (insert)
+                {
+                    _list.Add(new PointF(x, value));
+                }       
+                if (value < _yMin)
+                    _yMin = value;
+                if (value  > _yMax)
+                    _yMax = value;
+            }
+
+            if (_yMax - _yMin <= Math.Abs(_yMin * 0.000001))//расширяет диапазон по Y если значение функции очень слабо изменяется на заданном интервале
+            {
+                var middle = (_yMin + _yMax) / 2.0f;
+
+                _yMax = middle + Math.Abs(middle) * 0.000001f;
+                _yMin = middle - Math.Abs(middle) * 0.000001f;
+            }
+
+            
+        }
+
         protected override void OnPaint(PaintEventArgs e)
         {
             var g = e.Graphics;
             var mainRectangle = g.VisibleClipBounds;
+            e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
 
-            if (mainRectangle.Width != lastRectangleF.Width || mainRectangle.Height != lastRectangleF.Height)
-            {
-                _list.Clear();
-            }
-            lastRectangleF = mainRectangle;
             InitY(mainRectangle);
-            
+
             var converter = new WorldScreenConverter(
                 new Rectangle(40, 40, (int)mainRectangle.Width - 80, (int)mainRectangle.Height - 80),
                 new RectangleF(_xMin, _yMin, _xMax - _xMin, _yMax - _yMin)
             );
 
+            if (mainRectangle.Width != _lastRectangleF.Width || mainRectangle.Height != _lastRectangleF.Height)
+            {
+                _list = _list.Select(f => converter.WorldToScreen(f.X, f.Y)).ToList();                
+            }
+            _lastRectangleF = mainRectangle;
+    
             var xAxis = new XAxis(converter, g, _sizeGrid);
             var yAxis = new YAxis(converter, g, _sizeGrid);
             xAxis.DrawMainLine();
             yAxis.DrawMainLine();
-            
-            if (_list.Count > 0)
+
+            for (int i = 1; i < _list.Count; ++i)
             {
-                g.DrawLines(new Pen(Color.Red, 2), _list.ToArray());
-            }
-            else
-            {
-                var p1 = converter.WorldToScreen(converter.World.Left, (float)_func(converter.World.Left));
-                var dx = converter.World.Width / converter.Screen.Width;
-                _list.Add(p1);
-                for (var x = converter.World.Left + dx; x < converter.World.Right; x += dx)
-                {
-                    p1 = converter.WorldToScreen(x, (float) _func(x));
-                    _list.Add(p1);
-                }
-                g.DrawLines(new Pen(Color.Red, 2), _list.ToArray());
+                if (!(PointIsValid(_list[i]) && PointIsValid(_list[i-1]))) continue;
+                g.DrawLine(new Pen(Color.Blue, 2), _list[i - 1], _list[i]);                
             }
 
             if (_point.X != 0 && _point.Y >= 20)
@@ -111,9 +130,17 @@ namespace KG_lab_2
                 g.DrawString($"{screenText}\n{worldText}",
                     new Font(FontFamily.GenericMonospace, 9),
                 Brushes.Black, new PointF(_point.X, _point.Y - 30));
+                
+                g.DrawLine(Pens.Red, new Point(_point.X, converter.Screen.Top), new Point(_point.X, converter.Screen.Bottom));
+                g.DrawLine(Pens.Red, new Point(converter.Screen.Left, _point.Y), new Point(converter.Screen.Right, _point.Y));
             }
             
             base.OnPaint(e);
+        }
+
+        public static bool PointIsValid(PointF p)
+        {
+            return !(p.Y >= int.MaxValue || p.Y <= int.MinValue);
         }
 
         protected override void OnMouseMove(MouseEventArgs e)
@@ -128,6 +155,15 @@ namespace KG_lab_2
             _point = new Point(0, 0);
             Invalidate();
             base.OnMouseLeave(e);
+        }
+
+        protected override void OnMouseWheel(MouseEventArgs e)
+        {
+            _xMin += e.Delta > 0 ? 0.1f : -0.1f;
+            _xMax -= e.Delta > 0 ? 0.1f : -0.1f;
+            _lastRectangleF = new RectangleF();
+            Invalidate();
+            base.OnMouseWheel(e);
         }
     }
 }
