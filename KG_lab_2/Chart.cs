@@ -28,7 +28,7 @@ namespace KG_lab_2
             _xMin = xMin;
             _func = func;
 
-            Text = $@"График функции: {textFunc}";
+            Text = $@"График функции: y(x) = {textFunc}";
             Location = new Point(400, 200);
             StartPosition = FormStartPosition.Manual;
 
@@ -80,6 +80,12 @@ namespace KG_lab_2
 
             if (!(_yMax - _yMin <= Math.Abs(_yMin * 0.000001))) return;
             var middle = (_yMin + _yMax) / 2.0f;
+            if (middle == 0)
+            {
+                _yMax =  0.001f;
+                _yMin = -0.001f;
+                return;
+            }
 
             _yMax = middle + Math.Abs(middle) * 0.000001f;
             _yMin = middle - Math.Abs(middle) * 0.000001f;
