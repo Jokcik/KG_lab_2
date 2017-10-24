@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Linq;
 
 namespace KG_lab_2.Axis
 {
@@ -21,26 +22,39 @@ namespace KG_lab_2.Axis
             var hWu = h / k;
 
             n = (int)Math.Floor(Math.Log10(hWu));
+            var n1 = Math.Log10(hWu);
+            var n2 = Math.Log10(hWu / 2);
+            var n5 = Math.Log10(hWu / 5);
 
-            var mFl = hWu / Math.Pow(10.0, n);
-
-            if (mFl < 2)
-                m = mFl - 1 < 2 - mFl ? 1 : 2;
-            else if (mFl < 5)
-                m = mFl - 2 < 5 - mFl ? 2 : 5;
-            else
-                m = mFl - 5 < 10 - mFl ? 5 : 10;
-
-            if (m == 10)
+            var n1P = Math.Ceiling(n1);
+            var n1M = Math.Floor(n1);
+            
+            var n2P = Math.Ceiling(n2);
+            var n2M = Math.Floor(n2);
+            
+            var n5P = Math.Ceiling(n5);
+            var n5M = Math.Floor(n5);
+            
+            
+            var mass = new[]
             {
-                m = 1;
-                n++;
-            }
-
-            var worldStep = m * Math.Pow(10.0, n); // WU
-
-            h = worldStep * k ;
-            k = worldStep;
+                hWu - Math.Pow(10, n1M), 
+                Math.Pow(10, n1P)- hWu, 
+                
+                hWu - 2 * Math.Pow(10, n2M), 
+                2 * Math.Pow(10, n2P) - hWu,
+                
+                hWu - 5 * Math.Pow(10, n5M), 
+                5 * Math.Pow(10, n5P) - hWu,
+            };
+            var res = mass.Min();
+            m = 1;
+            if (Math.Abs(res - mass[0]) < 0.0000000001) k = Math.Pow(10, n1M);
+            else if (Math.Abs(res - mass[1]) < 0.0000000001) k = Math.Pow(10, n1P);
+            else if (Math.Abs(res - mass[2]) < 0.0000000001) k = (2 * Math.Pow(10, n2M));
+            else if (Math.Abs(res - mass[3]) < 0.0000000001) k = (2 * Math.Pow(10, n2P));
+            else if (Math.Abs(res - mass[4]) < 0.0000000001) k = (5 * Math.Pow(10, n5M));
+            else if (Math.Abs(res - mass[5]) < 0.0000000001) {k =  (5 * Math.Pow(10, n5P));}
         }
 
 
