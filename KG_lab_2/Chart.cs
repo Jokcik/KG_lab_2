@@ -175,8 +175,9 @@ namespace KG_lab_2
 
         protected override void OnMouseWheel(MouseEventArgs e)
         {
-            _xMin += e.Delta > 0 ? 0.1f : -0.1f;
-            _xMax -= e.Delta > 0 ? 0.1f : -0.1f;
+            var f = (_xMin + _xMin) * 0.01f;
+            _xMin += e.Delta > 0 ? f : -f;
+            _xMax -= e.Delta > 0 ? f : -f;
             _lastRectangleF = new RectangleF();
             Invalidate();
             base.OnMouseWheel(e);
